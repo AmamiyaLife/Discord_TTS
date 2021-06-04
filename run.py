@@ -17,9 +17,9 @@ INITIAL_EXTENSIONS = [
 class MyBot(commands.Bot):
 
     # MyBotのコンストラクタ。
-    def __init__(self, command_prefix):
+    def __init__(self, command_prefix, help_command):
         # スーパークラスのコンストラクタに値を渡して実行。
-        super().__init__(command_prefix)
+        super().__init__(command_prefix, help_command)
 
         # INITIAL_COGSに格納されている名前から、コグを読み込む。
         # エラーが発生した場合は、エラー内容を表示。
@@ -36,8 +36,18 @@ class MyBot(commands.Bot):
         print(self.user.id)
         print('-----')
 
+class JapaneseHelpCommand(commands.DefaultHelpCommand):
+    def __init__(self):
+        super().__init__()
+        self.commands_heading = "コマンド:"
+        self.no_category = "その他"
+        self.command_attrs["help"] = "コマンド一覧と簡単な説明を表示"
+
+    def get_ending_note(self):
+        return (f"各コマンドの説明: {prefix}help <コマンド名>\n"
+                f"各カテゴリの説明: {prefix}help <カテゴリ名>\n")
 
 # MyBotのインスタンス化及び起動処理。
 if __name__ == '__main__':
-    bot = MyBot(command_prefix=prefix) # command_prefixはコマンドの最初の文字として使うもの。 e.g. !ping
+    bot = MyBot(command_prefix=prefix,help_command=JapaneseHelpCommand()) # command_prefixはコマンドの最初の文字として使うもの。 e.g. !ping
     bot.run(TOKEN) # Botのトークン
